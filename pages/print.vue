@@ -17,8 +17,8 @@
                         <th scope="col"></th>
                     </tr>
                 </thead>
-                <tbody>
-                    <tr v-for="item in this.list" :key="item.uuid">
+                <tbody v-if="list.length > 0">
+                    <tr v-for="item in list" :key="item.uuid">
                         <th scope="row">{{ item.nro_contrato }}</th>
                         <td>{{ item.titular }}</td>
                         <td>{{ item.solicitado_em }}</td>
@@ -71,21 +71,6 @@ export default defineComponent({
                     headers: {
                         'x-api-key': 'e949f8ee3299e48ed653375017868b9b6d7a2c7b06191278eebaa9766ee9ab55'
                     }
-                });
-        },
-        get(event) {
-            let id = event.target.value;
-            var url = this.url + 'buscar&filial=' + id;
-
-            localStorage.setItem("athiaFilial", id);
-
-            this.$axios
-                .get(url, {
-                    headers: {
-                        'x-api-key': 'e949f8ee3299e48ed653375017868b9b6d7a2c7b06191278eebaa9766ee9ab55'
-                    }
-                }).then((response) => {
-                    this.list = response.data;
                 });
         },
         async acessar(uuid) {
