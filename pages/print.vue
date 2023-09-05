@@ -1,26 +1,41 @@
 <template>
-    <Menu>
-        <MenuButton>More</MenuButton>
-        <MenuItems>
-            <MenuItem v-slot="{ active }">
-            <a :class='{ "bg-blue-500": active }' href="/account-settings">
-                Account settings
-            </a>
-            </MenuItem>
-            <MenuItem v-slot="{ active }">
-            <a :class='{ "bg-blue-500": active }' href="/account-settings">
-                Documentation
-            </a>
-            </MenuItem>
-            <MenuItem disabled>
-            <span class="opacity-75">Invite a friend (coming soon!)</span>
-            </MenuItem>
-        </MenuItems>
-    </Menu>
+    <div class="container pt-3">
+        <h1>Impressão de Contratos Digitais</h1>
+        <div class="row input-group">
+            <div class="col-3">Nro Contrato:</div>
+            <div class="col-6"><input type="number" class="form-control" v-model="nro_contrato"></div>
+            <div class="col"><button class="btn btn-primary" @click="getData()">Procurar</button></div>
+        </div>
+        <div class="row">
+            <table class="table table-responsive table-striped" style="width: 100%;">
+                <thead>
+                    <tr>
+                        <th scope="col">Contrato N°</th>
+                        <th scope="col">Nome</th>
+                        <th scope="col">Data</th>
+                        <th scope="col">Motivo</th>
+                        <th scope="col"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="item in this.list" :key="item.uuid">
+                        <th scope="row">{{ item.nro_contrato }}</th>
+                        <td>{{ item.titular }}</td>
+                        <td>{{ item.solicitado_em }}</td>
+                        <td>{{ item.motivo }}</td>
+                        <td>
+                            <div class="buttons">
+                                <button class="btn btn-success" type="button" expanded @click="acessar(item.uuid)">Acessar</button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
 </template>
 <script setup>
 import { defineComponent } from 'vue';
-import { Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/vue'
 </script>
 <script>
 export default defineComponent({
@@ -50,18 +65,15 @@ export default defineComponent({
         //this.getData();
     },
     methods: {
-        getData() {
+        async getData() {
             this.list = [];
-            this.$axios
-                .get(this.url + 'getDocumentos&nro_contrato=' + this.nro_contrato, {
+            this.list = await $fetch(this.url + 'getDocumentos&nro_contrato=' + this.nro_contrato, {
                     headers: {
                         'x-api-key': 'e949f8ee3299e48ed653375017868b9b6d7a2c7b06191278eebaa9766ee9ab55'
                     }
-                }).then((response) => {
-                    this.list = response.data;
                 });
         },
-        get: function (event) {
+        get(event) {
             let id = event.target.value;
             var url = this.url + 'buscar&filial=' + id;
 
@@ -79,10 +91,8 @@ export default defineComponent({
         async acessar(uuid) {
             var options = {
                 method: 'GET',
-                url: '/api/view',
                 params: {
-                    access_token: this.token,
-                    key: uuid
+                    access_token: this.token
                 },
 
                 headers: {
@@ -91,9 +101,9 @@ export default defineComponent({
             };
 
             try {
-                let response = await this.$axios.request(options);
-                if (response.status == 200) {
-                    window.open(response.data.document.downloads.signed_file_url, '_blank');
+                let response = await $fetch('/api/documents/'+uuid, options);
+                if (response) {
+                    window.open(response.document.downloads.signed_file_url, '_blank');
                 } else {
                     this.error = response.error;
                 }
@@ -106,6 +116,3 @@ export default defineComponent({
     }
 })
 </script>
-  
-<style scoped></style>
-  
