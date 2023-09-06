@@ -1,8 +1,8 @@
 <template>
     <div class="container pt-3">
-        <h1>Gerar Assinatura de Contratos Digitais</h1>
+        <h1>Gerar Assinatura de Documentos Digitais</h1>
         <div class="row input-group">
-            <div class="col-6"><select class="form-select" v-if="listFilial.length > 0" style="width: 100%; height: 35px;" @change="get">
+            <div class="col-8"><select class="form-select" v-if="listFilial.length > 0" style="width: 100%; height: 35px;" @change="get">
                     <option>Selecione</option>
                     <option v-for="item in listFilial" :value="item.cod_filial" :key="item.cod_filial">
                         {{ item.filial }}
@@ -17,14 +17,16 @@
                         <th scope="col">Contrato N°</th>
                         <th scope="col">Nome</th>
                         <th scope="col">Data</th>
+                        <th scope="col">Motivo</th>
                         <th scope="col"></th>
                     </tr>
                 </thead>
                 <tbody v-if="list.length > 0">
                     <tr v-for="item in list" :key="item.cod_contrato">
-                        <th scope="row">{{ item.cod_contrato }}</th>
+                        <th scope="row">{{ item.nro_contrato }}</th>
                         <td>{{ item.nome }}</td>
-                        <td>{{ item.data_venda }}</td>
+                        <td>{{ item.data }}</td>
+                        <td>{{ item.motivo }}</td>
                         <td>
                             <div class="buttons">
                                 <button v-if="item.status == 'N'" class="btn btn-success" expanded
