@@ -46,6 +46,7 @@ export default defineComponent({
             urlProd: 'https://portal.athia.com.br/site/api/api-assinatura-digital.php?app=',
             url: null,
             contrato: null,
+            cod_doc: null
         }
     },
     mounted() {
@@ -61,11 +62,12 @@ export default defineComponent({
         let uri = window.location.search.substring(1);
         let params = new URLSearchParams(uri);
         this.contrato = params.get("contrato");
+        this.cod_doc = params.get("cod_doc");
         this.get(this.contrato);
     },
     methods: {
         async get(contrato) {
-            this.data = await $fetch(this.url + 'getDadosContrato&cod_contrato=' + contrato, {
+            this.data = await $fetch(this.url + 'getDadosContrato&cod_contrato=' + contrato+'&cod_doc='+this.cod_doc, {
                 headers: {
                     'x-api-key': 'e949f8ee3299e48ed653375017868b9b6d7a2c7b06191278eebaa9766ee9ab55'
                 }
@@ -99,7 +101,7 @@ export default defineComponent({
                 const response = await $fetch('/api/templates/' + this.data.clicksign.template + '/documents', options);
                 console.log(response);
                 if (response) {
-                    this.registraSolicitacao(this.contrato, response.document.key);
+                    this.registraSolicitacao(this.contrato, response.document.key, this.cod_doc);
                     this.adicionarSignatarios(response.document.key);
                 } else {
                     this.signPrepare = false;
@@ -132,13 +134,14 @@ export default defineComponent({
                 this.error = "Não foi possível cancelar o documento para assinatura. (" + error.response.data.error + ")";
             }
         },
-        async registraSolicitacao(contrato, uuidDoc) {
+        async registraSolicitacao(contrato, uuidDoc, cod_doc) {
             var options = {
                 method: 'POST',
                 headers: { 'Content-Type': 'multipart/form-data', 'x-api-key': 'e949f8ee3299e48ed653375017868b9b6d7a2c7b06191278eebaa9766ee9ab55' },
                 body: {
                     cod_contrato: contrato,
-                    uuid: uuidDoc
+                    uuid: uuidDoc,
+                    cod_doc: cod_doc
                 }
             }
 

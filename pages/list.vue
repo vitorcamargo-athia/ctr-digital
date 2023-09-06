@@ -30,9 +30,9 @@
                         <td>
                             <div class="buttons">
                                 <button v-if="item.status == 'N'" class="btn btn-success" expanded
-                                    @click="assinar(item.cod_contrato)">Assinar</button>
+                                    @click="assinar(item.cod_contrato, item.cod_doc)">Assinar</button>
                                 <button v-else class="btn btn-danger" expanded
-                                    @click="assinar(item.cod_contrato)">Cancelar</button>
+                                    @click="assinar(item.cod_contrato, item.cod_doc)">Cancelar</button>
                             </div>
                         </td>
                     </tr>
@@ -120,8 +120,8 @@ export default defineComponent({
                 }
             });
         },
-        assinar(codigo) {
-            window.location.href = "/assinatura?contrato=" + codigo;
+        assinar(codigo, cod_doc) {
+            window.location.href = "/assinatura?contrato=" + codigo+'&cod_doc='+cod_doc;
         }
     },
     computed: {
