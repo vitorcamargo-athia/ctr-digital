@@ -2,9 +2,9 @@
     <div class="container pt-3">
         <h1>Gerar Assinatura de Contratos Digitais</h1>
         <div class="row input-group">
-            <div class="col-6"><select class="form-select" style="width: 100%; height: 35px;" @change="get">
+            <div class="col-6"><select class="form-select" v-if="listFilial.length > 0" style="width: 100%; height: 35px;" @change="get">
                     <option>Selecione</option>
-                    <option v-for="item in this.listFilial" :value="item.cod_filial" :key="item.cod_filial">
+                    <option v-for="item in listFilial" :value="item.cod_filial" :key="item.cod_filial">
                         {{ item.filial }}
                     </option>
                 </select></div>
