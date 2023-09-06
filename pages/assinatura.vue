@@ -23,8 +23,11 @@
 </template>
 
 <script>
+import { defineComponent } from 'vue';
+import hmacSHA256 from 'crypto-js/hmac-sha256';
+import Base64 from 'crypto-js/enc-base64';
 
-export default {
+export default defineComponent({
     name: 'assinatura',
     layout: 'assinatura',
     data() {
@@ -91,7 +94,7 @@ export default {
             };
 
             try {
-                const response = await $fetch('/api/templates/'+this.data.clicksign.template+'/documents', options);
+                const response = await $fetch('/api/templates/' + this.data.clicksign.template + '/documents', options);
                 console.log(response);
                 if (response) {
                     this.registraSolicitacao(this.contrato, response.document.key);
@@ -119,7 +122,7 @@ export default {
             };
 
             try {
-                await $fetch('/api/documents/'+uuidDoc+'/cancel', options);
+                await $fetch('/api/documents/' + uuidDoc + '/cancel', options);
                 this.cancelPrepare = false;
                 this.cancelSuccess = true;
             } catch (error) {
@@ -132,8 +135,8 @@ export default {
                 method: 'POST',
                 headers: { 'Content-Type': 'multipart/form-data', 'x-api-key': 'e949f8ee3299e48ed653375017868b9b6d7a2c7b06191278eebaa9766ee9ab55' },
                 body: {
-                    cod_contrato:contrato,
-                    uuid:uuidDoc
+                    cod_contrato: contrato,
+                    uuid: uuidDoc
                 }
             }
 
@@ -235,40 +238,47 @@ export default {
         },
         async assinar(pkey, reqKey) {
 
-            async function calculateHMACSHA256(key, message) {
-                const encoder = new TextEncoder();
-                const data = encoder.encode(message);
-                const keyData = encoder.encode(key);
+            // async function calculateHMACSHA256(key, message) {
+            //     const encoder = new TextEncoder();
+            //     const data = encoder.encode(message);
+            //     const keyData = encoder.encode(key);
 
-                const keyBuffer = await crypto.subtle.importKey('raw', keyData, { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
-                const signatureBuffer = await crypto.subtle.sign('HMAC', keyBuffer, data);
+            //     const keyBuffer = await crypto.subtle.importKey('raw', keyData, { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
+            //     const signatureBuffer = await crypto.subtle.sign('HMAC', keyBuffer, data);
 
-                const signatureArray = Array.from(new Uint8Array(signatureBuffer));
-                const signatureHex = signatureArray.map(byte => byte.toString(16).padStart(2, '0')).join('');
+            //     const signatureArray = Array.from(new Uint8Array(signatureBuffer));
+            //     const signatureHex = signatureArray.map(byte => byte.toString(16).padStart(2, '0')).join('');
 
-                return signatureHex;
+            //     return signatureHex;
+            // }
+
+            function base64ToHex(str) {
+                const raw = atob(str);
+                let result = '';
+                for (let i = 0; i < raw.length; i++) {
+                    const hex = raw.charCodeAt(i).toString(16);
+                    result += (hex.length === 2 ? hex : '0' + hex);
+                }
+                return result.toLowerCase();
             }
 
-            calculateHMACSHA256(pkey, reqKey)
-                .then(async (res) => {
-                    var options = {
-                        method: 'POST',
-                        params: {
-                            access_token: this.token,
-                        },
-                        headers: { 'Content-Type': 'application/json' },
-                        body: {
-                            request_signature_key: reqKey,
-                            secret_hmac_sha256: res
-                        }
-                    };
+            var options = {
+                method: 'POST',
+                params: {
+                    access_token: this.token,
+                },
+                headers: { 'Content-Type': 'application/json' },
+                body: {
+                    request_signature_key: reqKey,
+                    secret_hmac_sha256: base64ToHex(Base64.stringify(hmacSHA256(reqKey, pkey)))
+                }
+            };
 
-                    try {
-                        await $fetch('/api/sign', options);
-                    } catch (error) {
-                        this.error = "Não foi possível criar o documento para assinatura. (" + error.response.data.error + ")";
-                    }
-                })
+            try {
+                await $fetch('/api/sign', options);
+            } catch (error) {
+                this.error = "Não foi possível criar o documento para assinatura. (" + error.response.data.error + ")";
+            }
 
 
         },
@@ -295,6 +305,6 @@ export default {
             }
         },
     }
-}
+})
 </script>
   
