@@ -10,6 +10,7 @@
 
         <div class="row" v-if="this.success" style="text-align: center; font-size: 20px; margin-top: 50px;">
             <h2>Documento enviado para assinatura, verifique a caixa de email e siga a instruções.</h2>
+            <a href="/list" class="btn btn-primary">Voltar</a>
         </div>
 
         <div class="row" v-if="this.cancelPrepare" style="text-align: center; font-size: 20px; margin-top: 50px;">
@@ -18,6 +19,7 @@
 
         <div class="row" v-if="this.cancelSuccess" style="text-align: center; font-size: 20px; margin-top: 50px;">
             <h2>Documento cancelado com sucesso.</h2>
+            <a href="/list" class="btn btn-primary">Voltar</a>
         </div>
     </div>
 </template>
