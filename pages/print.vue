@@ -39,7 +39,7 @@ import { defineComponent } from 'vue';
 </script>
 <script>
 export default defineComponent({
-    name: "listContractsSign",
+    name: "PrintContrato",
     layout: 'blank',
     title: "Lista",
     data() {
