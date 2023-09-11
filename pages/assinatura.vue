@@ -337,7 +337,7 @@ export default defineComponent({
             };
 
             try {
-                await $fetch('/api/'+(tipo == 'email' ? 'notification' : 'notify_by_whatsapp'), options);
+                await $fetch('/api/'+(tipo == 'email' ? 'notifications' : 'notify_by_whatsapp'), options);
                 this.success = true;
             } catch (error) {
                 this.error = "Não foi possível criar o documento para assinatura. (" + error.response.data.error + ")";

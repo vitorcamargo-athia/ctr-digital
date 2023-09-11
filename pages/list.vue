@@ -29,14 +29,22 @@
                         <td>{{ item.data }}</td>
                         <td>{{ item.motivo }}</td>
                         <td>
-                            <div class="buttons">
-                                <button v-if="item.status == 'N'" class="btn btn-success" expanded
-                                    @click="assinarWhatsapp(item.cod_contrato, item.cod_doc)">WhatsApp</button>
-                                <button v-if="item.status == 'N'" class="btn btn-primary" expanded
-                                    @click="assinarEmail(item.cod_contrato, item.cod_doc)">E-mail</button>
-                                <button v-if="item.status == 'N'" class="btn btn-warning" expanded
-                                    @click="assinar(item.cod_contrato, item.cod_doc)">Loja</button>
-                                <button v-else class="btn btn-danger" expanded
+                            <div class="buttons" v-if="item.status == 'N'" >
+                                <button class="btn btn-success mx-1" expanded
+                                    @click="assinarWhatsapp(item.cod_contrato, item.cod_doc)">
+                                    <Icon name="ic:baseline-whatsapp"/>
+                                    WhatsApp</button>
+                                <button class="btn btn-primary mx-1" expanded
+                                    @click="assinarEmail(item.cod_contrato, item.cod_doc)">
+                                    <Icon name="ic:outline-email"/>
+                                    E-mail</button>
+                                <button class="btn btn-warning mx-1" expanded
+                                    @click="assinar(item.cod_contrato, item.cod_doc)">
+                                    <Icon name="ic:outline-store"/>
+                                    Loja</button>
+                            </div>
+                            <div class="buttons" v-else >
+                                <button class="btn btn-danger" expanded
                                     @click="assinar(item.cod_contrato, item.cod_doc)">Cancelar</button>
                             </div>
                         </td>

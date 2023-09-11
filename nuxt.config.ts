@@ -2,7 +2,8 @@
 export default defineNuxtConfig({
   devtools: { enabled: true },
   modules: [
-    '@nuxt-alt/proxy'
+    '@nuxt-alt/proxy',
+    'nuxt-icon'
   ],
   css: [
     'bootstrap/dist/css/bootstrap.css'
