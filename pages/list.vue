@@ -2,7 +2,8 @@
     <div class="container pt-3">
         <h1>Gerar Assinatura de Documentos Digitais</h1>
         <div class="row input-group">
-            <div class="col-8"><select class="form-select" v-if="listFilial.length > 0" style="width: 100%; height: 35px;" @change="get">
+            <div class="col-8"><select class="form-select" v-if="listFilial.length > 0" style="width: 100%; height: 35px;"
+                    @change="get">
                     <option>Selecione</option>
                     <option v-for="item in listFilial" :value="item.cod_filial" :key="item.cod_filial">
                         {{ item.filial }}
@@ -30,7 +31,11 @@
                         <td>
                             <div class="buttons">
                                 <button v-if="item.status == 'N'" class="btn btn-success" expanded
-                                    @click="assinar(item.cod_contrato, item.cod_doc)">Assinar</button>
+                                    @click="assinarWhatsapp(item.cod_contrato, item.cod_doc)">WhatsApp</button>
+                                <button v-if="item.status == 'N'" class="btn btn-primary" expanded
+                                    @click="assinarEmail(item.cod_contrato, item.cod_doc)">E-mail</button>
+                                <button v-if="item.status == 'N'" class="btn btn-warning" expanded
+                                    @click="assinar(item.cod_contrato, item.cod_doc)">Loja</button>
                                 <button v-else class="btn btn-danger" expanded
                                     @click="assinar(item.cod_contrato, item.cod_doc)">Cancelar</button>
                             </div>
@@ -43,6 +48,8 @@
 </template>
 <script setup>
 import { defineComponent } from 'vue';
+import Swal from 'sweetalert2'
+
 </script>
 <script>
 export default defineComponent({
@@ -121,7 +128,65 @@ export default defineComponent({
             });
         },
         assinar(codigo, cod_doc) {
-            window.location.href = "/assinatura?contrato=" + codigo+'&cod_doc='+cod_doc;
+            window.location.href = "/assinatura?contrato=" + codigo + '&cod_doc=' + cod_doc+"&tipo=presential";
+        },
+        async assinarEmail(codigo, cod_doc) {
+            let emails = await $fetch(this.url + 'getEmails&cod_contrato=' + codigo, {
+                headers: {
+                    'x-api-key': 'e949f8ee3299e48ed653375017868b9b6d7a2c7b06191278eebaa9766ee9ab55'
+                }
+            });
+
+
+            const { value: selecionado } = await Swal.fire({
+                title: 'Selecione um e-mail para envio do contrato',
+                input: 'select',
+                inputOptions: emails,
+                inputPlaceholder: 'Selecione um e-mail',
+                showCancelButton: true,
+                inputValidator: (value) => {
+                    return new Promise((resolve) => {
+                        if (value != '') {
+                            resolve()
+                        } else {
+                            resolve('Selecione um e-mail!')
+                        }
+                    })
+                }
+            })
+
+            if (selecionado) {
+                window.location.href = "/assinatura?contrato=" + codigo + '&cod_doc=' + cod_doc + "&tipo=email&email="+emails[selecionado];
+            }
+        },
+        async assinarWhatsapp(codigo, cod_doc) {
+            let telefones = await $fetch(this.url + 'getTelefones&cod_contrato=' + codigo, {
+                headers: {
+                    'x-api-key': 'e949f8ee3299e48ed653375017868b9b6d7a2c7b06191278eebaa9766ee9ab55'
+                }
+            });
+
+
+            const { value: selecionado } = await Swal.fire({
+                title: 'Selecione o telefone com WhatsApp',
+                input: 'select',
+                inputOptions: telefones,
+                inputPlaceholder: 'Selecione um telefone',
+                showCancelButton: true,
+                inputValidator: (value) => {
+                    return new Promise((resolve) => {
+                        if (value != '') {
+                            resolve()
+                        } else {
+                            resolve('Selecione um telefone!')
+                        }
+                    })
+                }
+            })
+
+            if (selecionado) {
+                window.location.href = "/assinatura?contrato=" + codigo + '&cod_doc=' + cod_doc + "&tipo=whatsapp&telefone="+telefones[selecionado];
+            }
         }
     },
     computed: {

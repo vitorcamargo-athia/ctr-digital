@@ -46,7 +46,10 @@ export default defineComponent({
             urlProd: 'https://portal.athia.com.br/site/api/api-assinatura-digital.php?app=',
             url: null,
             contrato: null,
-            cod_doc: null
+            cod_doc: null,
+            tipo: null,
+            email: null,
+            telefone: null
         }
     },
     mounted() {
@@ -63,11 +66,14 @@ export default defineComponent({
         let params = new URLSearchParams(uri);
         this.contrato = params.get("contrato");
         this.cod_doc = params.get("cod_doc");
+        this.tipo = params.get("tipo");
+        this.email = params.get("email");
+        this.telefone = params.get("telefone");
         this.get(this.contrato);
     },
     methods: {
         async get(contrato) {
-            this.data = await $fetch(this.url + 'getDadosContrato&cod_contrato=' + contrato+'&cod_doc='+this.cod_doc, {
+            this.data = await $fetch(this.url + 'getDadosContrato&cod_contrato=' + contrato + '&cod_doc=' + this.cod_doc + "&tipo=" + this.tipo + "&email=" + this.email + "&telefone=" + this.telefone, {
                 headers: {
                     'x-api-key': 'e949f8ee3299e48ed653375017868b9b6d7a2c7b06191278eebaa9766ee9ab55'
                 }
@@ -205,7 +211,15 @@ export default defineComponent({
                 const response = await $fetch('/api/lists', options);
                 if (response) {
                     var reqKey = response.list.request_signature_key;
-                    this.notificaSignatarioPresencial(reqKey);
+                    switch (this.tipo) {
+                        case 'presential':
+                            this.notificaSignatarioPresencial(reqKey);
+                            break;
+                        default:
+                            this.notificaSignatario(reqKey, this.tipo);
+                            break;
+
+                    }
                 } else {
                     this.error = response.error;
                 }
@@ -304,6 +318,26 @@ export default defineComponent({
 
             try {
                 await $fetch('/api/send_presential_signature_request/email', options);
+                this.success = true;
+            } catch (error) {
+                this.error = "Não foi possível criar o documento para assinatura. (" + error.response.data.error + ")";
+            }
+        },
+        async notificaSignatario(keyRequestSignature, tipo) {
+            var options = {
+                method: 'POST',
+                params: {
+                    access_token: this.token,
+                },
+                headers: { 'Content-Type': 'application/json' },
+                body: {
+                    request_signature_key: keyRequestSignature,
+                    messages: "Por favor, assine esse documento!"
+                }
+            };
+
+            try {
+                await $fetch('/api/'+(tipo == 'email' ? 'notification' : 'notify_by_whatsapp'), options);
                 this.success = true;
             } catch (error) {
                 this.error = "Não foi possível criar o documento para assinatura. (" + error.response.data.error + ")";
