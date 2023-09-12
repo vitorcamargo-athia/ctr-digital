@@ -29,23 +29,29 @@
                         <td>{{ item.data }}</td>
                         <td>{{ item.motivo }}</td>
                         <td>
-                            <div class="buttons" v-if="item.status == 'N'" >
+                            <div class="buttons" v-if="item.status == 'N'">
                                 <button class="btn btn-success mx-1" expanded
                                     @click="assinarWhatsapp(item.cod_contrato, item.cod_doc)">
-                                    <Icon name="ic:baseline-whatsapp"/>
-                                    WhatsApp</button>
+                                    <Icon name="ic:baseline-whatsapp" />
+                                    WhatsApp
+                                </button>
                                 <button class="btn btn-primary mx-1" expanded
                                     @click="assinarEmail(item.cod_contrato, item.cod_doc)">
-                                    <Icon name="ic:outline-email"/>
-                                    E-mail</button>
+                                    <Icon name="ic:outline-email" />
+                                    E-mail
+                                </button>
                                 <button class="btn btn-warning mx-1" expanded
                                     @click="assinar(item.cod_contrato, item.cod_doc)">
-                                    <Icon name="ic:outline-store"/>
-                                    Loja</button>
+                                    <Icon name="ic:outline-store" />
+                                    Loja
+                                </button>
                             </div>
-                            <div class="buttons" v-else >
-                                <button class="btn btn-danger" expanded
-                                    @click="assinar(item.cod_contrato, item.cod_doc)">Cancelar</button>
+                            <div class="buttons" v-else>
+                                <button class="btn btn-danger mx-1" expanded
+                                    @click="cancelar(item.cod_contrato, item.cod_doc)">
+                                    <Icon name="ic:outline-cancel" />
+                                    Cancelar
+                                </button>
                             </div>
                         </td>
                     </tr>
@@ -136,7 +142,21 @@ export default defineComponent({
             });
         },
         assinar(codigo, cod_doc) {
-            window.location.href = "/assinatura?contrato=" + codigo + '&cod_doc=' + cod_doc+"&tipo=presential";
+            window.location.href = "/assinatura?contrato=" + codigo + '&cod_doc=' + cod_doc + "&tipo=presential";
+        },
+        cancelar(codigo, cod_doc) {
+            Swal.fire({
+                title: 'Deseja mesmo cancelar?',
+                showDenyButton: true,
+                showCancelButton: true,
+                showConfirmButton: false,
+                cancelButtonText: 'Sair',
+                denyButtonText: 'Cancelar',
+            }).then((result) => {
+                if (result.isDenied) {
+                    window.location.href = "/assinatura?contrato=" + codigo + '&cod_doc=' + cod_doc + "&tipo=presential";
+                }
+            })
         },
         async assinarEmail(codigo, cod_doc) {
             let emails = await $fetch(this.url + 'getEmails&cod_contrato=' + codigo, {
@@ -164,7 +184,7 @@ export default defineComponent({
             })
 
             if (selecionado) {
-                window.location.href = "/assinatura?contrato=" + codigo + '&cod_doc=' + cod_doc + "&tipo=email&email="+emails[selecionado];
+                window.location.href = "/assinatura?contrato=" + codigo + '&cod_doc=' + cod_doc + "&tipo=email&email=" + emails[selecionado];
             }
         },
         async assinarWhatsapp(codigo, cod_doc) {
@@ -193,7 +213,7 @@ export default defineComponent({
             })
 
             if (selecionado) {
-                window.location.href = "/assinatura?contrato=" + codigo + '&cod_doc=' + cod_doc + "&tipo=whatsapp&telefone="+telefones[selecionado];
+                window.location.href = "/assinatura?contrato=" + codigo + '&cod_doc=' + cod_doc + "&tipo=whatsapp&telefone=" + telefones[selecionado];
             }
         }
     },
