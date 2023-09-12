@@ -247,6 +247,9 @@ export default defineComponent({
                 const response = await $fetch('/api/lists', options);
                 if (response) {
                     var reqKey = response.list.request_signature_key;
+                    if (role == 'validator') {
+                        this.notificaSignatario(reqKey, this.tipo);
+                    }
                     this.assinar(pkey, reqKey);
                 } else {
                     this.error = response.error;
@@ -337,7 +340,7 @@ export default defineComponent({
             };
 
             try {
-                await $fetch('/api/'+(tipo == 'email' ? 'notifications' : 'notify_by_whatsapp'), options);
+                await $fetch('/api/' + (tipo == 'email' ? 'notifications' : 'notify_by_whatsapp'), options);
                 this.success = true;
             } catch (error) {
                 this.error = "Não foi possível criar o documento para assinatura. (" + error.response.data.error + ")";
