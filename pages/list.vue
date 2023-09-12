@@ -150,8 +150,8 @@ export default defineComponent({
                 showDenyButton: true,
                 showCancelButton: true,
                 showConfirmButton: false,
-                cancelButtonText: 'Sair',
-                denyButtonText: 'Cancelar',
+                cancelButtonText: 'Não, sair',
+                denyButtonText: 'Sim, cancelar',
             }).then((result) => {
                 if (result.isDenied) {
                     window.location.href = "/assinatura?contrato=" + codigo + '&cod_doc=' + cod_doc + "&tipo=presential";
