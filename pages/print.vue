@@ -4,7 +4,10 @@
         <div class="row input-group">
             <div class="col-3">Nro Contrato:</div>
             <div class="col-6"><input type="number" class="form-control" v-model="nro_contrato"></div>
-            <div class="col"><button class="btn btn-primary" @click="getData()">Procurar</button></div>
+            <div class="col"><button class="btn btn-primary" @click="getData()">
+                    <Icon name="material-symbols:search" />
+                    Procurar
+                </button></div>
         </div>
         <div class="row">
             <table class="table table-responsive table-striped" style="width: 100%;">
@@ -25,7 +28,10 @@
                         <td>{{ item.motivo }}</td>
                         <td>
                             <div class="buttons">
-                                <button class="btn btn-success" type="button" expanded @click="acessar(item.uuid)">Acessar</button>
+                                <button class="btn btn-success" type="button" expanded @click="acessar(item.uuid)">
+                                    <Icon name="ic:sharp-link" />
+                                    <span class="d-md-none d-lg-inline mx-1">Acessar</span>
+                                </button>
                             </div>
                         </td>
                     </tr>
@@ -68,10 +74,10 @@ export default defineComponent({
         async getData() {
             this.list = [];
             this.list = await $fetch(this.url + 'getDocumentos&nro_contrato=' + this.nro_contrato, {
-                    headers: {
-                        'x-api-key': 'e949f8ee3299e48ed653375017868b9b6d7a2c7b06191278eebaa9766ee9ab55'
-                    }
-                });
+                headers: {
+                    'x-api-key': 'e949f8ee3299e48ed653375017868b9b6d7a2c7b06191278eebaa9766ee9ab55'
+                }
+            });
         },
         async acessar(uuid) {
             var options = {
@@ -86,7 +92,7 @@ export default defineComponent({
             };
 
             try {
-                let response = await $fetch('/api/documents/'+uuid, options);
+                let response = await $fetch('/api/documents/' + uuid, options);
                 if (response) {
                     window.open(response.document.downloads.signed_file_url, '_blank');
                 } else {

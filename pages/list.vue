@@ -9,7 +9,9 @@
                         {{ item.filial }}
                     </option>
                 </select></div>
-            <div class="col"><button class="btn btn-primary" @click="getData()">Procurar</button></div>
+            <div class="col"><button class="btn btn-primary" @click="getData()">
+                <Icon name="material-symbols:search" /> 
+                Procurar</button></div>
         </div>
         <div class="row">
             <table class="table table-responsive table-striped" style="width: 100%;">
@@ -33,24 +35,24 @@
                                 <button class="btn btn-success mx-1" expanded
                                     @click="assinarWhatsapp(item.cod_contrato, item.cod_doc)">
                                     <Icon name="ic:baseline-whatsapp" />
-                                    WhatsApp
+                                    <span class="d-md-none d-lg-inline mx-1">WhatsApp</span>
                                 </button>
                                 <button class="btn btn-primary mx-1" expanded
                                     @click="assinarEmail(item.cod_contrato, item.cod_doc)">
                                     <Icon name="ic:outline-email" />
-                                    E-mail
+                                    <span class="d-md-none d-lg-inline mx-1">E-mail</span>
                                 </button>
                                 <button class="btn btn-warning mx-1" expanded
                                     @click="assinar(item.cod_contrato, item.cod_doc)">
                                     <Icon name="ic:outline-store" />
-                                    Loja
+                                    <span class="d-md-none d-lg-inline mx-1">Loja</span>
                                 </button>
                             </div>
                             <div class="buttons" v-else>
                                 <button class="btn btn-danger mx-1" expanded
                                     @click="cancelar(item.cod_contrato, item.cod_doc)">
                                     <Icon name="ic:outline-cancel" />
-                                    Cancelar
+                                    <span class="d-md-none d-lg-inline mx-1">Cancelar</span>
                                 </button>
                             </div>
                         </td>
