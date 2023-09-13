@@ -105,6 +105,20 @@ export default defineComponent({
 
             try {
                 const response = await $fetch('/api/templates/' + this.data.clicksign.template + '/documents', options);
+                await $fetch('/api/documents/' + response.document.key, {
+                    method: 'PATCH',
+                    params: {
+                        access_token: this.token
+                    },
+
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+
+                    body: {
+                        sequence_enabled: true
+                    }
+                });
                 console.log(response);
                 if (response) {
                     this.registraSolicitacao(this.contrato, response.document.key, this.cod_doc);
@@ -203,7 +217,7 @@ export default defineComponent({
                         document_key: uuidDoc,
                         signer_key: signerKey,
                         sign_as: "sign",
-                        group: 1
+                        group: 2
                     }
                 }
             };
@@ -230,7 +244,7 @@ export default defineComponent({
         },
         async enviarSignatario(uuidDoc, signerKey, role, pkey) {
             let g = 1;
-            if(role == 'validator')
+            if (role == 'validator')
                 g = 3;
             var options = {
                 method: 'POST',
@@ -345,7 +359,7 @@ export default defineComponent({
             };
 
             try {
-                await $fetch('/api/' + (tipo == 'email' ? 'notifications' : 'notify_by_whatsapp'), options);
+        //        await $fetch('/api/' + (tipo == 'email' ? 'notifications' : 'notify_by_whatsapp'), options);
                 this.success = true;
             } catch (error) {
                 this.error = "Não foi possível criar o documento para assinatura. (" + error.response.data.error + ")";
