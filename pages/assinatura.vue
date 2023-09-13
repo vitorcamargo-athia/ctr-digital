@@ -202,7 +202,8 @@ export default defineComponent({
                     list: {
                         document_key: uuidDoc,
                         signer_key: signerKey,
-                        sign_as: "sign"
+                        sign_as: "sign",
+                        group: 1
                     }
                 }
             };
@@ -228,6 +229,9 @@ export default defineComponent({
             }
         },
         async enviarSignatario(uuidDoc, signerKey, role, pkey) {
+            let g = 1;
+            if(role == 'validator')
+                g = 3;
             var options = {
                 method: 'POST',
                 params: {
@@ -238,7 +242,8 @@ export default defineComponent({
                     list: {
                         document_key: uuidDoc,
                         signer_key: signerKey,
-                        sign_as: role
+                        sign_as: role,
+                        group: g
                     }
                 }
             };
