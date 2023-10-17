@@ -4,14 +4,15 @@
         <div class="row input-group">
             <div class="col-8"><select class="form-select" v-if="listFilial.length > 0" style="width: 100%; height: 35px;"
                     @change="get">
-                    <option>Selecione</option>
+                    <option>Selecione a filial</option>
                     <option v-for="item in listFilial" :value="item.cod_filial" :key="item.cod_filial">
                         {{ item.filial }}
                     </option>
                 </select></div>
             <div class="col"><button class="btn btn-primary" @click="getData()">
-                <Icon name="material-symbols:search" /> 
-                Procurar</button></div>
+                    <Icon name="material-symbols:search" />
+                    Procurar
+                </button></div>
         </div>
         <div class="row">
             <table class="table table-responsive table-striped" style="width: 100%;">
@@ -32,17 +33,17 @@
                         <td>{{ item.motivo }}</td>
                         <td>
                             <div class="buttons" v-if="item.status == 'N'">
-                                <button class="btn btn-success mx-1" expanded
+                                <button class="btn btn-success mx-1" expanded v-if="conf.opcoes.whatsapp"
                                     @click="assinarWhatsapp(item.cod_contrato, item.cod_doc)">
                                     <Icon name="ic:baseline-whatsapp" />
                                     <span class="d-md-none d-lg-inline mx-1">WhatsApp</span>
                                 </button>
-                                <button class="btn btn-primary mx-1" expanded
+                                <button class="btn btn-primary mx-1" expanded v-if="conf.opcoes.email"
                                     @click="assinarEmail(item.cod_contrato, item.cod_doc)">
                                     <Icon name="ic:outline-email" />
                                     <span class="d-md-none d-lg-inline mx-1">E-mail</span>
                                 </button>
-                                <button class="btn btn-warning mx-1" expanded
+                                <button class="btn btn-warning mx-1" expanded v-if="conf.opcoes.loja"
                                     @click="assinar(item.cod_contrato, item.cod_doc)">
                                     <Icon name="ic:outline-store" />
                                     <span class="d-md-none d-lg-inline mx-1">Loja</span>
@@ -80,16 +81,23 @@ export default defineComponent({
             selected: 0,
             urlHomolog: 'https://floriculturaathia.com.br/teste/api-assinatura-digital.php?app=',
             urlProd: 'https://portal.athia.com.br/site/api/api-assinatura-digital.php?app=',
-            url: null
+            url: null,
+            conf: { opcoes: { whatsapp: false, email: false, loja: false } }
         }
     },
-    mounted() {
+    async mounted() {
 
         // if (window.location.hostname == "localhost") {
-        this.url = this.urlHomolog;
-        /* } else {
-             this.url = this.urlProd;
-         }*/
+            this.url = this.urlHomolog;
+        // } else {
+        //     this.url = this.urlProd;
+        // }
+
+        this.conf = await $fetch(this.url + 'getOpcoesUsuario&cod_usuario=' + this.$route.query.usuario, {
+            headers: {
+                'x-api-key': 'e949f8ee3299e48ed653375017868b9b6d7a2c7b06191278eebaa9766ee9ab55'
+            }
+        });
 
         this.getFilial();
         this.getData();
@@ -144,7 +152,7 @@ export default defineComponent({
             });
         },
         assinar(codigo, cod_doc) {
-            window.location.href = "/assinatura?contrato=" + codigo + '&cod_doc=' + cod_doc + "&tipo=presential";
+            window.location.href = "/assinatura?contrato=" + codigo + '&cod_doc=' + cod_doc + "&tipo=presential&usuario=" + this.$route.query.usuario;
         },
         cancelar(codigo, cod_doc) {
             Swal.fire({
