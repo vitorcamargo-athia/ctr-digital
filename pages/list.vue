@@ -4,7 +4,7 @@
         <div class="row input-group">
             <div class="col-8"><select class="form-select" v-if="listFilial.length > 0" style="width: 100%; height: 35px;"
                     @change="get">
-                    <option>Selecione a filial</option>
+                    <option value="-1">Selecione a filial</option>
                     <option v-for="item in listFilial" :value="item.cod_filial" :key="item.cod_filial">
                         {{ item.filial }}
                     </option>
