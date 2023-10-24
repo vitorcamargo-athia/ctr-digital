@@ -87,11 +87,11 @@ export default defineComponent({
     },
     async mounted() {
 
-        // if (window.location.hostname == "localhost") {
+        if (window.location.hostname == "localhost") {
             this.url = this.urlHomolog;
-        // } else {
-        //     this.url = this.urlProd;
-        // }
+        } else {
+            this.url = this.urlProd;
+        }
 
         this.conf = await $fetch(this.url + 'getOpcoesUsuario&cod_usuario=' + this.$route.query.usuario, {
             headers: {

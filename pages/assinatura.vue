@@ -53,13 +53,13 @@ export default defineComponent({
         }
     },
     mounted() {
-        // if (window.location.hostname == "localhost") {
+        if (window.location.hostname == "localhost") {
             this.token = '6830ce18-ee25-4861-b337-c1db7fe79df0';
             this.url = this.urlHomolog;
-        // } else {
-        //     this.token = 'a7063c4f-52bb-4f53-a5a4-5e6733e337f5';
-        //     this.url = this.urlProd;
-        // }
+        } else {
+            this.token = 'a7063c4f-52bb-4f53-a5a4-5e6733e337f5';
+            this.url = this.urlProd;
+        }
 
         let uri = window.location.search.substring(1);
         let params = new URLSearchParams(uri);
