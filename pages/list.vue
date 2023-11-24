@@ -152,7 +152,7 @@ export default defineComponent({
             });
         },
         assinar(codigo, cod_doc) {
-            window.location.href = "/assinatura?contrato=" + codigo + '&cod_doc=' + cod_doc + "&tipo=presential&usuario=" + this.$route.query.usuario;
+            window.location.href = "/assinatura?contrato=" + codigo + '&cod_doc=' + cod_doc + "&tipo=presential&usuario=" + (this.$route.query.usuario ? this.$route.query.usuario : null);
         },
         cancelar(codigo, cod_doc) {
             Swal.fire({

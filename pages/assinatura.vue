@@ -10,7 +10,7 @@
 
         <div class="row" v-if="this.success" style="text-align: center; font-size: 20px; margin-top: 50px;">
             <h2>Documento enviado para assinatura, verifique a caixa de email e siga a instruções.</h2>
-            <a :href="'/list?usuario='+$route.query.usuario" class="btn btn-primary">Voltar</a>
+            <a :href="'/list?usuario=' + $route.query.usuario" class="btn btn-primary">Voltar</a>
         </div>
 
         <div class="row" v-if="this.cancelPrepare" style="text-align: center; font-size: 20px; margin-top: 50px;">
@@ -19,7 +19,7 @@
 
         <div class="row" v-if="this.cancelSuccess" style="text-align: center; font-size: 20px; margin-top: 50px;">
             <h2>Documento cancelado com sucesso.</h2>
-            <a :href="'/list?usuario='+$route.query.usuario" class="btn btn-primary">Voltar</a>
+            <a :href="'/list?usuario=' + $route.query.usuario" class="btn btn-primary">Voltar</a>
         </div>
     </div>
 </template>
@@ -72,7 +72,7 @@ export default defineComponent({
     },
     methods: {
         async get(contrato) {
-            this.data = await $fetch(this.url + 'getDadosContrato&cod_contrato=' + contrato + '&cod_doc=' + this.cod_doc + "&tipo=" + this.tipo + "&email=" + this.email + "&telefone=" + this.telefone + "&cod_usuario=" + this.$route.query.usuario, {
+            this.data = await $fetch(this.url + 'getDadosContrato&cod_contrato=' + contrato + '&cod_doc=' + this.cod_doc + "&tipo=" + this.tipo + "&email=" + this.email + "&telefone=" + this.telefone + "&cod_usuario=" + (this.$route.query.usuario ? this.$route.query.usuario : null), {
                 headers: {
                     'x-api-key': 'e949f8ee3299e48ed653375017868b9b6d7a2c7b06191278eebaa9766ee9ab55'
                 }
@@ -128,7 +128,7 @@ export default defineComponent({
                 }
             } catch (error) {
                 this.signPrepare = false;
-                this.error = "Não foi possível criar o documento para assinatura. (" + error.response.data.error + ")";
+                this.error = "Não foi possível criar o documento para assinatura. (" + error.data.errors[0] + ")";
             }
         },
         async cancelDocument(uuidDoc) {
@@ -150,7 +150,7 @@ export default defineComponent({
                 this.cancelSuccess = true;
             } catch (error) {
                 this.cancelPrepare = false;
-                this.error = "Não foi possível cancelar o documento para assinatura. (" + error.response.data.error + ")";
+                this.error = "Não foi possível cancelar o documento para assinatura. (" + error.data.errors[0] + ")";
             }
         },
         async registraSolicitacao(contrato, uuidDoc, cod_doc) {
@@ -167,7 +167,7 @@ export default defineComponent({
             try {
                 await $fetch(this.url + 'registrarSolicitacao', options);
             } catch (error) {
-                this.error = "Não foi possível criar o documento para assinatura. (" + error.response.data.error + ")";
+                this.error = "Não foi possível criar o documento para assinatura. (" + error.data.errors[0] + ")";
             }
         },
         async adicionarSignatarios(uuidDoc) {
@@ -190,13 +190,14 @@ export default defineComponent({
 
                 try {
                     const response = await $fetch('/api/signers', options);
+
                     if (response) {
                         this.enviarSignatarioPresencial(uuidDoc, response.signer.key);
                     } else {
                         this.error = response.error;
                     }
                 } catch (error) {
-                    this.error = "Não foi possível criar o documento para assinatura. (" + error.response.data.error + ")";
+                    this.error = "Não foi possível adicionar assinatura ao documento. (" + error.data.errors[0] + ")";
                 }
             }
             for (let i = 0; i < this.data.signers['api'].length; i++) {
@@ -238,7 +239,7 @@ export default defineComponent({
                     this.error = response.error;
                 }
             } catch (error) {
-                this.error = "Não foi possível criar o documento para assinatura. (" + error.response.data.error + ")";
+                this.error = "Não foi possível gerar a assinatura. (" + error.data.errors[0] + ")";
             }
         },
         async enviarSignatario(uuidDoc, signerKey, role, pkey) {
@@ -273,7 +274,7 @@ export default defineComponent({
                     this.error = response.error;
                 }
             } catch (error) {
-                this.error = "Não foi possível criar o documento para assinatura. (" + error.response.data.error + ")";
+                this.error = "Não foi possível criar o documento para assinatura. (" + error.data.errors[0] + ")";
             }
         },
         async assinar(pkey, reqKey) {
@@ -317,7 +318,7 @@ export default defineComponent({
             try {
                 await $fetch('/api/sign', options);
             } catch (error) {
-                this.error = "Não foi possível criar o documento para assinatura. (" + error.response.data.error + ")";
+                this.error = "Não foi possível criar o documento para assinatura. (" + error.data.errors[0] + ")";
             }
 
 
@@ -341,7 +342,7 @@ export default defineComponent({
                 await $fetch('/api/send_presential_signature_request/email', options);
                 this.success = true;
             } catch (error) {
-                this.error = "Não foi possível criar o documento para assinatura. (" + error.response.data.error + ")";
+                this.error = "Não foi possível criar o documento para assinatura. (" + error.data.errors[0] + ")";
             }
         },
         async notificaSignatario(keyRequestSignature, tipo) {
@@ -361,7 +362,7 @@ export default defineComponent({
                 //        await $fetch('/api/' + (tipo == 'email' ? 'notifications' : 'notify_by_whatsapp'), options);
                 this.success = true;
             } catch (error) {
-                this.error = "Não foi possível criar o documento para assinatura. (" + error.response.data.error + ")";
+                this.error = "Não foi possível criar o documento para assinatura. (" + error.data.errors[0] + ")";
             }
         },
     }
