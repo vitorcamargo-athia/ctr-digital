@@ -4,7 +4,7 @@
         <div class="row input-group">
             <div class="col-3">Nro Contrato:</div>
             <div class="col-6"><input type="number" class="form-control" v-model="nro_contrato"></div>
-            <div class="col"><button class="btn btn-primary" @click="getData()">
+            <div class="col"><button class="btn btn-primary" @click="getData()" :disabled="nro_contrato.length == 0">
                     <Icon name="material-symbols:search" />
                     Procurar
                 </button></div>

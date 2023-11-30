@@ -11,7 +11,7 @@ export default defineNuxtConfig({
   proxy: {
     proxies: {
       '/api': {
-        //target: 'https://sandbox.clicksign.com/api/v1',
+       // target: 'https://sandbox.clicksign.com/api/v1',
         target: 'https://app.clicksign.com/api/v1',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, '')

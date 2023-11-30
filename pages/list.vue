@@ -3,7 +3,7 @@
         <h1>Gerar Assinatura de Documentos Digitais</h1>
         <div class="row input-group">
             <div class="col-8"><select class="form-select" v-if="listFilial.length > 0" style="width: 100%; height: 35px;"
-                    @change="get">
+                    v-model="filial">
                     <option value="-1">Selecione a filial</option>
                     <option v-for="item in listFilial" :value="item.cod_filial" :key="item.cod_filial">
                         {{ item.filial }}
@@ -82,10 +82,13 @@ export default defineComponent({
             urlHomolog: 'https://floriculturaathia.com.br/teste/api-assinatura-digital.php?app=',
             urlProd: 'https://portal.athia.com.br/site/api/api-assinatura-digital.php?app=',
             url: null,
-            conf: { opcoes: { whatsapp: false, email: false, loja: false } }
+            conf: { opcoes: { whatsapp: false, email: false, loja: false } },
+            filial: null
         }
     },
     async mounted() {
+
+        this.filial = this.$route.query.filial_padrao;
 
         if (window.location.hostname == "localhost") {
             this.url = this.urlHomolog;
@@ -105,10 +108,9 @@ export default defineComponent({
     methods: {
         getData() {
             this.list = [];
-            let filial = localStorage.getItem("athiaFilial");
-            if (filial !== undefined) {
-                this.selected = filial;
-                this.getDefault(filial);
+            if (this.filial !== undefined) {
+                this.selected = this.filial;
+                this.getDefault();
             }
         },
         async getFilial() {
@@ -133,7 +135,7 @@ export default defineComponent({
             let id = event.target.value;
             var url = this.url + 'buscar&filial=' + id;
 
-            localStorage.setItem("athiaFilial", id);
+            this.filial = id;
 
             this.$axios
                 .get(url, {
@@ -144,8 +146,8 @@ export default defineComponent({
                     this.list = response.data;
                 });
         },
-        async getDefault(filial) {
-            this.list = await $fetch(this.url + 'buscar&filial=' + filial, {
+        async getDefault() {
+            this.list = await $fetch(this.url + 'buscar&filial=' + this.filial, {
                 headers: {
                     'x-api-key': 'e949f8ee3299e48ed653375017868b9b6d7a2c7b06191278eebaa9766ee9ab55'
                 }
